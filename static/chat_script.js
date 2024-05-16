@@ -3,13 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const messageArea = document.getElementById('message-area');
     const clearChatButton = document.getElementById('clearChat');
+    let styleSheet = document.createElement('style');
+    document.head.appendChild(styleSheet);
 
     let currentStyles = {};
 
     // Function to append messages to the message area
     function appendMessage(text, sender) {
         const messageDiv = document.createElement('div');
-        messageDiv.textContent = text;
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>'); // Convert newlines to <br>
         messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
         messageArea.appendChild(messageDiv);
         messageArea.scrollTop = messageArea.scrollHeight; // Auto-scroll to the latest message
@@ -32,12 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedStyles) {
             const styles = JSON.parse(savedStyles);
             Object.keys(styles).forEach(selector => {
-                document.querySelectorAll(selector).forEach(element => {
-                    const properties = styles[selector];
-                    Object.keys(properties).forEach(property => {
-                        element.style[property] = properties[property];
-                    });
+                const properties = styles[selector];
+                let styleString = `${selector} {`;
+                Object.keys(properties).forEach(property => {
+                    styleString += `${property}: ${properties[property]};`;
                 });
+                styleString += '}';
+                styleSheet.innerHTML += styleString;
             });
         }
     }
@@ -57,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendMessageToServer(message) {
         fetch('/send_message', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: message })
         })
         .then(response => response.json())
@@ -77,31 +80,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to handle responses from the server
     function handleResponse(response) {
         if (response.includes('UI_CHANGE:')) {
-            const jsonStart = response.indexOf('[');
-            const jsonEnd = response.lastIndexOf(']') + 1;
-            if (jsonStart !== -1 && jsonEnd > jsonStart) {
-                const jsonStr = response.substring(jsonStart, jsonEnd);
-                try {
-                    const commands = JSON.parse(jsonStr);
-                    commands.forEach(command => handleAICommand(command));
-                    response = response.substring(0, jsonStart); // Remove JSON from the message
-                } catch (e) {
-                    console.error('Failed to parse JSON commands:', e);
-                }
+            const jsonStart = response.indexOf('UI_CHANGE:');
+            const jsonStr = response.substring(jsonStart + 10).trim();
+            try {
+                const commands = JSON.parse(jsonStr);
+                commands.forEach(command => handleAICommand(command));
+                response = response.substring(0, jsonStart).trim(); // Remove JSON from the message
+            } catch (e) {
+                console.error('Failed to parse JSON commands:', e);
             }
         }
-        appendMessage(response, 'bot');
+        if (response) { // Only append if there's a response
+            appendMessage(response, 'bot');
+        }
     }
 
     // Function to handle commands from the AI (CSS changes)
     function handleAICommand(command) {
         if (command.action === "changeCSS") {
-            document.querySelectorAll(command.selector).forEach(element => {
-                Object.entries(command.properties).forEach(([prop, value]) => {
-                    element.style[prop] = value;
-                    saveStyleToLocalStorage(command.selector, prop, value); // Save styles
-                });
+            const selector = command.selector;
+            const properties = command.properties;
+            let styleString = `${selector} {`;
+            Object.entries(properties).forEach(([prop, value]) => {
+                styleString += `${prop}: ${value};`;
+                saveStyleToLocalStorage(selector, prop, value); // Save styles
             });
+            styleString += '}';
+            styleSheet.innerHTML += styleString;
         }
     }
 

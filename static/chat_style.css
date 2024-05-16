@@ -2,6 +2,7 @@ html {
     height: 100%;
 }
 
+/* general styling for the entire page, do NOT edit!! */
 body {
     display: flex;
     flex-direction: column;
@@ -96,41 +97,28 @@ body {
 /* styling for the user's messages */
 .user-message {
     padding: 10px;
-    background-color: #D1E8E2;
     border-radius: 8px;
     margin-bottom: 10px;
     align-self: flex-end;
-    max-width: 75%;
     word-wrap: break-word;
+    white-space: pre-wrap; 
 }
 
 /* styling for the assistant's messages */
 .bot-message {
     padding: 10px;
-    background-color: #FFF8C6;
     border-radius: 8px;
     margin-bottom: 10px;
     align-self: flex-start;
-    max-width: 75%;
     word-wrap: break-word;
-}
-
-/* styling for the assistant's UI_CHANGE command, it's tagged */
-.ui-change-command {
-    font-size: 0.8em; /* Smaller font size */
-    background-color: #e0e0e0; /* Light grey background */
-    color: #333; /* Dark text color */
-    border-radius: 5px; /* Rounded corners for tag-like appearance */
-    padding: 2px 5px; /* Padding inside the tag */
-    margin: 0 5px; /* Space around the tag */
-    display: inline-block; /* Ensure it aligns well in line */
+    white-space: pre-wrap; 
 }
 
 /* Loading animation container */
 .loading-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
     height: 24px;
     width: 100%;
     margin-top: 10px;
