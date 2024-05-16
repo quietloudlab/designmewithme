@@ -1,0 +1,175 @@
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F2F1FA;
+    transition: background-color 0.3s ease;
+    margin: 0;
+}
+
+/* main chat window container */
+#chat-container-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* chat window */
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+    filter: drop-shadow(0px 8px 24px rgb(0, 0, 0, .08));
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    max-width: 480px;
+    max-height: 600px;
+}
+
+/* area containing the messages */
+#message-area {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* area containing the input field and send button */
+#input-area {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+/* input field for the user to type messages */
+#chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* button that sends the message from the user */
+#send-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#send-button:hover {
+    background-color: #45a049;
+}
+
+/* button that resets the entire application */
+#clearChat {
+    padding: 10px 20px;
+    margin-top: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 480px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#clearChat:hover {
+    background-color: #e53935;
+}
+
+/* styling for the user's messages */
+.user-message {
+    padding: 10px;
+    background-color: #D1E8E2;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    align-self: flex-end;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+/* styling for the assistant's messages */
+.bot-message {
+    padding: 10px;
+    background-color: #FFF8C6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+/* styling for the assistant's UI_CHANGE command, it's tagged */
+.ui-change-command {
+    font-size: 0.8em; /* Smaller font size */
+    background-color: #e0e0e0; /* Light grey background */
+    color: #333; /* Dark text color */
+    border-radius: 5px; /* Rounded corners for tag-like appearance */
+    padding: 2px 5px; /* Padding inside the tag */
+    margin: 0 5px; /* Space around the tag */
+    display: inline-block; /* Ensure it aligns well in line */
+}
+
+/* Loading animation container */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #4CAF50;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Styling for the feedback container */
+.feedback-container {
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 600px) {
+    #chat-container {
+        max-width: 100%;
+        max-height: 100%;
+        padding: 10px;
+    }
+
+    #chat-input, #send-button, #clearChat {
+        padding: 10px;
+    }
+
+    .user-message, .bot-message {
+        max-width: 100%;
+    }
+}
