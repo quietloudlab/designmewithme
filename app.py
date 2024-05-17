@@ -9,9 +9,6 @@ api_key = os.getenv('OPENAI_API_KEY')
 if not api_key:
     raise ValueError("No OPENAI_API_KEY found in environment variables")
 
-# Debugging: Print the API key to ensure it's correct (remove in production)
-print(f"API Key: {api_key}")
-
 # Initialize OpenAI client
 client = OpenAI(api_key=api_key)
 
