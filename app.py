@@ -4,8 +4,11 @@ from openai import OpenAI
 
 app = Flask(__name__)
 
-# Set up OpenAI client
-client = OpenAI()
+# Set up OpenAI client with API key from environment variable
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    raise ValueError("No OPENAI_API_KEY found in environment variables")
+client = OpenAI(api_key=api_key)
 
 # Create an assistant
 assistant = client.beta.assistants.create(
