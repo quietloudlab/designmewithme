@@ -13,5 +13,3 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
-export OPENAI_API_KEY='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'
