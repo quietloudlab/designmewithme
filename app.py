@@ -9,7 +9,7 @@ api_key = os.getenv('OPENAI_API_KEY')
 if not api_key:
     raise ValueError("No OPENAI_API_KEY found in environment variables")
 
-# Masked print of the API key for debugging purposes
+# Print API key for debugging purposes (masked for security)
 print(f"API Key: {api_key[:5]}...{api_key[-5:]}")
 
 # Initialize OpenAI client
@@ -238,7 +238,7 @@ body {
 //add !important to the end of the property value to ensure it overrides any existing styles.
 """,
     tools=[{"type": "code_interpreter"}],
-    model="gpt-4-1106-preview"
+    model="gpt-4o"
 )
 
 # Create a thread for a new conversation
@@ -251,27 +251,23 @@ def home():
 @app.route('/send_message', methods=['POST'])
 def send_message():
     user_message = request.json['message']
-    # Add user message to the thread
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=user_message
     )
-    
-    # Create a run to get a response from the assistant
+
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id
     )
-    
-    # Wait for the run to complete and collect responses
+
     while run.status != "completed":
         run = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
             run_id=run.id
         )
 
-    # Collect all messages after the last user message, assuming they are from the assistant
     messages = client.beta.threads.messages.list(
         thread_id=thread.id,
         order="asc"
@@ -280,7 +276,7 @@ def send_message():
         msg.content[0].text.value for msg in messages
         if msg.role == "assistant" and msg.created_at > message.created_at
     ]
-    
+
     return jsonify({"responses": assistant_responses})
 
 @app.route('/get_introduction', methods=['GET'])
