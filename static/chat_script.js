@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to send the message to the server and handle the response
     function sendMessageToServer(message) {
-        fetch('/send_message', {
+        return fetch('/send_message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: message })
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appendMessage('Error connecting to the server', 'bot');
         });
     }
-
+    
     // Function to handle responses from the server
     function handleResponse(response) {
         if (response.includes('UI_CHANGE:')) {
@@ -156,12 +156,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearChatButton.addEventListener('click', () => {
         if (confirm("Are you sure you want to clear the chat and reset all settings? This action cannot be undone.")) {
-            localStorage.removeItem('chatMessages');
-            localStorage.removeItem('userStyles');
-            window.location.reload();
-            sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.");
+            console.log("Sending reset message to server.");
+            
+            // Send reset message to the server
+            sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.")
+                .then(() => {
+                    // Delay the reload to ensure the message is sent
+                    setTimeout(() => {
+                        localStorage.removeItem('chatMessages');
+                        localStorage.removeItem('userStyles');
+                        window.location.reload();
+                    }, 1000); // Adjust the delay as needed
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    appendMessage('Error connecting to the server', 'bot');
+                    localStorage.removeItem('chatMessages');
+                    localStorage.removeItem('userStyles');
+                    window.location.reload();
+                });
         }
-    });
+    });    
 
     // Initialize saved styles and messages
     applySavedStyles();
