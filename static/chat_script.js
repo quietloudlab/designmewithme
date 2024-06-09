@@ -8,17 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentStyles = {};
 
-    // Function to append messages to the message area
     function appendMessage(text, sender) {
         const messageDiv = document.createElement('div');
-        messageDiv.innerHTML = text.replace(/\n/g, '<br>'); // Convert newlines to <br>
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>');
         messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
         messageArea.appendChild(messageDiv);
-        messageArea.scrollTop = messageArea.scrollHeight; // Auto-scroll to the latest message
-        saveMessageToLocalStorage(text, sender); // Save message to localStorage
+        messageArea.scrollTop = messageArea.scrollHeight;
+        saveMessageToLocalStorage(text, sender);
     }
 
-    // Function to load saved messages from localStorage
     function loadSavedMessages() {
         const messages = localStorage.getItem('chatMessages');
         if (messages) {
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to apply saved styles from localStorage
     function applySavedStyles() {
         const savedStyles = localStorage.getItem('userStyles');
         if (savedStyles) {
@@ -45,18 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to send messages to the server
     function sendMessage() {
         const message = inputArea.value.trim();
         if (message) {
             appendMessage(message, 'user');
-            showLoading(); // Show loading animation when sending a message
+            showLoading();
             sendMessageToServer(message);
-            inputArea.value = '';  // Clear input field after sending
+            inputArea.value = '';
         }
     }
 
-    // Function to send the message to the server and handle the response
     function sendMessageToServer(message) {
         return fetch('/send_message', {
             method: 'POST',
@@ -76,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appendMessage('Error connecting to the server', 'bot');
         });
     }
-    
-    // Function to handle responses from the server
+
     function handleResponse(response) {
         if (response.includes('UI_CHANGE:')) {
             const jsonStart = response.indexOf('UI_CHANGE:');
@@ -85,17 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const commands = JSON.parse(jsonStr);
                 commands.forEach(command => handleAICommand(command));
-                response = response.substring(0, jsonStart).trim(); // Remove JSON from the message
+                response = response.substring(0, jsonStart).trim();
             } catch (e) {
                 console.error('Failed to parse JSON commands:', e);
             }
         }
-        if (response) { // Only append if there's a response
+        if (response) {
             appendMessage(response, 'bot');
         }
     }
 
-    // Function to handle commands from the AI (CSS changes)
     function handleAICommand(command) {
         if (command.action === "changeCSS") {
             const selector = command.selector;
@@ -103,24 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
             let styleString = `${selector} {`;
             Object.entries(properties).forEach(([prop, value]) => {
                 styleString += `${prop}: ${value};`;
-                saveStyleToLocalStorage(selector, prop, value); // Save styles
+                saveStyleToLocalStorage(selector, prop, value);
             });
             styleString += '}';
             styleSheet.innerHTML += styleString;
         }
     }
 
-    // Show loading animation
     function showLoading() {
         const loadingContainer = document.createElement('div');
         loadingContainer.id = 'loading';
         loadingContainer.className = 'loading-container';
         loadingContainer.innerHTML = '<div class="loading-spinner"></div>';
         messageArea.appendChild(loadingContainer);
-        messageArea.scrollTop = messageArea.scrollHeight; // Auto-scroll to the loading animation
+        messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    // Hide loading animation
     function hideLoading() {
         const loadingContainer = document.getElementById('loading');
         if (loadingContainer) {
@@ -128,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to save styles to localStorage
     function saveStyleToLocalStorage(selector, property, value) {
         let styles = localStorage.getItem('userStyles');
         styles = styles ? JSON.parse(styles) : {};
@@ -137,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userStyles', JSON.stringify(styles));
     }
 
-    // Function to save messages to localStorage
     function saveMessageToLocalStorage(text, sender) {
         let messages = localStorage.getItem('chatMessages');
         messages = messages ? JSON.parse(messages) : [];
@@ -145,40 +134,28 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
 
-    // Event listeners
     sendButton.addEventListener('click', sendMessage);
     inputArea.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             sendMessage();
-            e.preventDefault();  // Prevents the default action
+            e.preventDefault();
         }
     });
 
     clearChatButton.addEventListener('click', () => {
         if (confirm("Are you sure you want to clear the chat and reset all settings? This action cannot be undone.")) {
-            console.log("Sending reset message to server.");
-            
-            // Send reset message to the server
-            sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.")
-                .then(() => {
-                    // Delay the reload to ensure the message is sent
-                    setTimeout(() => {
-                        localStorage.removeItem('chatMessages');
-                        localStorage.removeItem('userStyles');
-                        window.location.reload();
-                    }, 1000); // Adjust the delay as needed
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    appendMessage('Error connecting to the server', 'bot');
-                    localStorage.removeItem('chatMessages');
-                    localStorage.removeItem('userStyles');
-                    window.location.reload();
-                });
+            localStorage.removeItem('chatMessages');
+            localStorage.removeItem('userStyles');
+            localStorage.setItem('resetGreeting', 'true');
+            window.location.reload();
         }
-    });    
+    });
 
-    // Initialize saved styles and messages
+    if (localStorage.getItem('resetGreeting') === 'true') {
+        localStorage.removeItem('resetGreeting');
+        sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.");
+    }
+
     applySavedStyles();
     loadSavedMessages();
 });
