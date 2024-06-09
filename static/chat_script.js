@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('chatMessages');
             localStorage.removeItem('userStyles');
             window.location.reload();
+            sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.");
         }
     });
 
