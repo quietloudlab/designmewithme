@@ -3,26 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const messageArea = document.getElementById('message-area');
     const clearChatButton = document.getElementById('clearChat');
-    const introModal = document.getElementById('intro-modal');
-    const closeIntro = document.getElementById('close-intro');
+    const aboutModal = document.getElementById('about-modal');
+    const aboutButton = document.getElementById('about-button');
+    const closeAbout = document.getElementById('close-about');
     const startChat = document.getElementById('start-chat');
     let styleSheet = document.createElement('style');
     document.head.appendChild(styleSheet);
 
-    // Show the intro modal on first load
-    introModal.style.display = 'block';
+    // Show the about modal when the About button is clicked
+    aboutButton.addEventListener('click', () => {
+        aboutModal.style.display = 'block';
+    });
 
-    closeIntro.addEventListener('click', () => {
-        introModal.style.display = 'none';
+    closeAbout.addEventListener('click', () => {
+        aboutModal.style.display = 'none';
     });
 
     startChat.addEventListener('click', () => {
-        introModal.style.display = 'none';
+        aboutModal.style.display = 'none';
     });
 
     window.onclick = (event) => {
-        if (event.target === introModal) {
-            introModal.style.display = 'none';
+        if (event.target === aboutModal) {
+            aboutModal.style.display = 'none';
         }
     };
 
