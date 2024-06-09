@@ -52,7 +52,6 @@ body {
     bottom: 0;
     background-color: #FFF; /* Ensure input area has a background */
     padding: 10px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Add a shadow to separate input area */
 }
 
 #chat-input {
