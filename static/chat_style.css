@@ -1,24 +1,48 @@
-html {
+html, body {
     height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F2F1FA;
+    -webkit-text-size-adjust: 100%; /* Prevent zooming */
+    overflow: hidden; /* Prevent overflow */
 }
 
 body {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #F2F1FA;
-    transition: background-color 0.3s ease;
-    margin: 0;
-    -webkit-text-size-adjust: 100%; /* Prevent zooming */
+}
+
+#menu-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+#menu-bar button {
+    background: none;
+    border: none;
+    color: #4b4b4b;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+#menu-bar button:hover {
+    color: #252525;
 }
 
 #chat-container-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100% - 50px); /* Adjust for the height of the menu bar */
     width: 100%;
-    margin: auto;
+    margin-top: 50px; /* Adjust for the height of the menu bar */
     padding: 10px;
     box-sizing: border-box;
     overflow: hidden; /* Prevent overflow */
@@ -42,16 +66,15 @@ body {
 #message-area {
     flex-grow: 1;
     overflow-y: auto;
+    padding-bottom: 10px; /* Add padding to prevent overlap with input area */
 }
 
 #input-area {
     display: flex;
     gap: 10px;
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 0;
     background-color: #FFF; /* Ensure input area has a background */
     padding: 10px;
+    box-sizing: border-box;
 }
 
 #chat-input {
@@ -77,9 +100,7 @@ body {
 
 #clearChat {
     padding: 10px 20px;
-    margin-top: 32px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 10px;
     width: 100%;
     max-width: 480px;
     background-color: #f44336;
@@ -87,6 +108,7 @@ body {
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    align-self: center;
 }
 
 #clearChat:hover {
@@ -138,31 +160,6 @@ body {
     color: red;
     margin-top: 10px;
     font-size: 0.9em;
-}
-
-/* Menu Bar styles */
-#menu-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px 20px;
-    z-index: 1000;
-}
-
-#menu-bar button {
-    background: none;
-    width:auto;
-    border: none;
-    color: #4b4b4b;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 10px 40px;
-}
-
-#menu-bar button:hover {
-    color: #252525;
 }
 
 /* Modal styles */
@@ -217,13 +214,24 @@ body {
     background-color: #45a049;
 }
 
-
-
+/* Media Queries for Responsive Design */
 @media (max-width: 600px) {
+    #menu-bar {
+        padding: 10px;
+    }
+
+    #menu-bar button {
+        padding: 10px 20px;
+    }
+
+    #chat-container-container {
+        padding: 5px;
+    }
+
     #chat-container {
         max-width: 100%;
         max-height: 100%;
-        padding: 10px;
+        padding: 5px;
     }
 
     #chat-input, #send-button, #clearChat {
