@@ -149,7 +149,7 @@ body {
     justify-content: flex-end;
     padding: 10px 20px;
     z-index: 1000;
-    padding: 10px;
+    padding-right: 20px;
 }
 
 #menu-bar button {

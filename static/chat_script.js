@@ -167,9 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearChatButton.addEventListener('click', () => {
         if (confirm("Are you sure you want to clear the chat and reset all settings? This action cannot be undone.")) {
+            // Remove messages and styles from localStorage
             localStorage.removeItem('chatMessages');
             localStorage.removeItem('userStyles');
-            window.location.reload();
+
+            // Send reset message to the server
+            sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.')
+                .then(() => {
+                    // Reload the page to reset styles and chat
+                    window.location.reload();
+                });
         }
     });
 
