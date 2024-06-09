@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutButton = document.getElementById('about-button');
     const closeAbout = document.getElementById('close-about');
     const startChat = document.getElementById('start-chat');
+    const feedbackButton = document.getElementById('feedback-button');
+    const feedbackModal = document.getElementById('feedback-form');
+    const closeFeedback = document.getElementById('close-feedback');
+    const feedbackForm = document.getElementById('feedbackForm');
     let styleSheet = document.createElement('style');
     document.head.appendChild(styleSheet);
 
@@ -28,6 +32,31 @@ document.addEventListener('DOMContentLoaded', () => {
             aboutModal.style.display = 'none';
         }
     };
+
+    // Show the feedback modal when the Feedback button is clicked
+    feedbackButton.addEventListener('click', () => {
+        feedbackModal.style.display = 'block';
+    });
+
+    closeFeedback.addEventListener('click', () => {
+        feedbackModal.style.display = 'none';
+    });
+
+    window.onclick = (event) => {
+        if (event.target === feedbackModal) {
+            feedbackModal.style.display = 'none';
+        }
+    };
+
+    feedbackForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const feedbackText = document.getElementById('feedbackText').value.trim();
+        if (feedbackText) {
+            console.log('Feedback:', feedbackText);  // Replace with your feedback handling logic
+            feedbackModal.style.display = 'none';
+            alert('Thank you for your feedback!');
+        }
+    });
 
     let currentStyles = {};
 
