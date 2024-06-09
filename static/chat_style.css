@@ -2,7 +2,6 @@ html {
     height: 100%;
 }
 
-/* general styling for the entire page, do NOT edit!! */
 body {
     display: flex;
     flex-direction: column;
@@ -11,9 +10,9 @@ body {
     background-color: #F2F1FA;
     transition: background-color 0.3s ease;
     margin: 0;
+    -webkit-text-size-adjust: 100%; /* Prevent zooming */
 }
 
-/* main chat window container */
 #chat-container-container {
     display: flex;
     flex-direction: column;
@@ -22,9 +21,9 @@ body {
     margin: auto;
     padding: 10px;
     box-sizing: border-box;
+    overflow: hidden; /* Prevent overflow */
 }
 
-/* chat window */
 #chat-container {
     display: flex;
     flex-direction: column;
@@ -40,28 +39,30 @@ body {
     max-height: 600px;
 }
 
-/* area containing the messages */
 #message-area {
     flex-grow: 1;
     overflow-y: auto;
 }
 
-/* area containing the input field and send button */
 #input-area {
     display: flex;
-    margin-top: 10px;
     gap: 10px;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    background-color: #FFF; /* Ensure input area has a background */
+    padding: 10px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Add a shadow to separate input area */
 }
 
-/* input field for the user to type messages */
 #chat-input {
     flex-grow: 1;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    font-size: 16px; /* Prevent zooming */
 }
 
-/* button that sends the message from the user */
 #send-button {
     padding: 10px 20px;
     background-color: #aaaaaa;
@@ -75,7 +76,6 @@ body {
     background-color: #999999;
 }
 
-/* button that resets the entire application */
 #clearChat {
     padding: 10px 20px;
     margin-top: 32px;
@@ -94,7 +94,6 @@ body {
     background-color: #e53935;
 }
 
-/* styling for the user's messages */
 .user-message {
     padding: 10px;
     border-radius: 8px;
@@ -104,7 +103,6 @@ body {
     white-space: pre-wrap; 
 }
 
-/* styling for the assistant's messages */
 .bot-message {
     padding: 10px;
     border-radius: 8px;
@@ -114,7 +112,6 @@ body {
     white-space: pre-wrap; 
 }
 
-/* Loading animation container */
 .loading-container {
     display: flex;
     justify-content: left;
@@ -124,7 +121,6 @@ body {
     margin-top: 10px;
 }
 
-/* Loading spinner */
 .loading-spinner {
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-left-color: #4CAF50;
@@ -132,20 +128,72 @@ body {
     width: 16px;
     height: 16px;
     animation: spin 1s linear infinite;
+    margin-left: 8px;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-/* Styling for the feedback container */
 .feedback-container {
     color: red;
     margin-top: 10px;
     font-size: 0.9em;
 }
 
-/* Media Queries for Responsive Design */
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 10px;
+    text-align: center;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#start-chat {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#start-chat:hover {
+    background-color: #45a049;
+}
+
+
 @media (max-width: 600px) {
     #chat-container {
         max-width: 100%;

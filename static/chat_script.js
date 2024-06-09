@@ -3,8 +3,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const messageArea = document.getElementById('message-area');
     const clearChatButton = document.getElementById('clearChat');
+    const introModal = document.getElementById('intro-modal');
+    const closeIntro = document.getElementById('close-intro');
+    const startChat = document.getElementById('start-chat');
     let styleSheet = document.createElement('style');
     document.head.appendChild(styleSheet);
+
+    // Show the intro modal on first load
+    introModal.style.display = 'block';
+
+    closeIntro.addEventListener('click', () => {
+        introModal.style.display = 'none';
+    });
+
+    startChat.addEventListener('click', () => {
+        introModal.style.display = 'none';
+    });
+
+    window.onclick = (event) => {
+        if (event.target === introModal) {
+            introModal.style.display = 'none';
+        }
+    };
 
     let currentStyles = {};
 
@@ -146,15 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm("Are you sure you want to clear the chat and reset all settings? This action cannot be undone.")) {
             localStorage.removeItem('chatMessages');
             localStorage.removeItem('userStyles');
-            localStorage.setItem('resetGreeting', 'true');
             window.location.reload();
         }
     });
-
-    if (localStorage.getItem('resetGreeting') === 'true') {
-        localStorage.removeItem('resetGreeting');
-        sendMessageToServer("System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.");
-    }
 
     applySavedStyles();
     loadSavedMessages();
