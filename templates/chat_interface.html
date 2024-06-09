@@ -10,7 +10,6 @@
     <!-- Minimal Menu Bar -->
     <div id="menu-bar">
         <button id="about-button">About</button>
-        <button id="feedback-button">Feedback</button>
     </div>
 
     <!-- About Modal -->
@@ -18,20 +17,8 @@
         <div class="modal-content">
             <span class="close-button" id="close-about">&times;</span>
             <h2>Welcome to DesignMeWithMe!</h2>
-            <p>This app allows you to customize your chatbot interface through conversation. Simply chat with the AI to suggest changes and see the interface update in real-time. Click the "Clear Chat and Reset Styles" button to start fresh at any time.</p>
+            <p>This app allows you to customize your chatbot interface through conversation. Simply chat with the AI to suggest changes and see the interface update in real-time. <br> Click the "Clear Chat and Reset Styles" button to start fresh at any time.</p>
             <button id="start-chat">Start Chatting</button>
-        </div>
-    </div>
-
-    <!-- Feedback Modal -->
-    <div id="feedback-form" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-feedback">&times;</span>
-            <h2>Feedback</h2>
-            <form id="feedbackForm">
-                <textarea id="feedbackText" rows="4" placeholder="Your feedback..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
         </div>
     </div>
 
@@ -39,11 +26,11 @@
         <div id="chat-container">
             <div id="message-area"></div>
             <div id="input-area">
-                <input type="text" id="chat-input" placeholder="Type a message..." data-tooltip="Type your message here...">
-                <button id="send-button" data-tooltip="Click to send your message">Send</button>
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-button">Send</button>
             </div>
         </div>
-        <button id="clearChat" data-tooltip="Clear chat and reset styles">Clear Chat and Reset Styles</button>
+        <button id="clearChat">Clear Chat and Reset Styles</button>
         <div id="feedback" class="feedback-container"></div>
     </div>
     <script src="../static/chat_script.js"></script>

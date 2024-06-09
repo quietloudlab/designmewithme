@@ -1,109 +1,3 @@
-/* Menu Bar styles */
-#menu-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px 20px;
-    z-index: 1000;
-}
-
-#menu-bar button {
-    background: none;
-    border: none;
-    color: #4CAF50;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 10px 20px;
-}
-
-#menu-bar button:hover {
-    color: #45a049;
-}
-
-/* Modal styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    border-radius: 10px;
-    text-align: center;
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#start-chat {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-#start-chat:hover {
-    background-color: #45a049;
-}
-
-/* Feedback Modal styles */
-#feedback-form .modal-content {
-    width: 70%;
-    padding: 20px;
-}
-
-#feedbackText {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-#feedbackForm button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-#feedbackForm button:hover {
-    background-color: #45a049;
-}
-
-/* Chat Styles */
 html {
     height: 100%;
 }
@@ -158,7 +52,6 @@ body {
     bottom: 0;
     background-color: #FFF; /* Ensure input area has a background */
     padding: 10px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Add a shadow to separate input area */
 }
 
 #chat-input {
@@ -171,7 +64,7 @@ body {
 
 #send-button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #aaaaaa;
     color: white;
     border: none;
     border-radius: 8px;
@@ -179,7 +72,7 @@ body {
 }
 
 #send-button:hover {
-    background-color: #45a049;
+    background-color: #999999;
 }
 
 #clearChat {
@@ -207,8 +100,6 @@ body {
     align-self: flex-end;
     word-wrap: break-word;
     white-space: pre-wrap; 
-    background-color: #E0F7FA;
-    color: #006064;
 }
 
 .bot-message {
@@ -218,8 +109,6 @@ body {
     align-self: flex-start;
     word-wrap: break-word;
     white-space: pre-wrap; 
-    background-color: #FCE4EC;
-    color: #880E4F;
 }
 
 .loading-container {
@@ -251,48 +140,84 @@ body {
     font-size: 0.9em;
 }
 
-/* Tooltip styles */
-[data-tooltip] {
-    position: relative;
+/* Menu Bar styles */
+#menu-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    z-index: 1000;
+    padding: 10px;
+}
+
+#menu-bar button {
+    background: none;
+    border: none;
+    color: #4b4b4b;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+#menu-bar button:hover {
+    color: #252525;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 10px;
+    text-align: left;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
     cursor: pointer;
 }
 
-[data-tooltip]::before,
-[data-tooltip]::after {
-    text-transform: none;
-    font-size: 12px;
-    line-height: 1.2;
-    pointer-events: none;
-    opacity: 0;
-    position: absolute;
-    transition: all 0.15s ease;
+#start-chat {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-[data-tooltip]::before {
-    content: attr(data-tooltip);
-    background: rgba(60, 60, 60, 0.9);
-    color: #fff;
-    border-radius: 5px;
-    padding: 5px 10px;
-    bottom: 120%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
+#start-chat:hover {
+    background-color: #45a049;
 }
 
-[data-tooltip]::after {
-    content: '';
-    border: 5px solid transparent;
-    border-top-color: rgba(60, 60, 60, 0.9);
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-}
 
-[data-tooltip]:hover::before,
-[data-tooltip]:hover::after {
-    opacity: 1;
-}
 
 @media (max-width: 600px) {
     #chat-container {
@@ -307,22 +232,5 @@ body {
 
     .user-message, .bot-message {
         max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    #menu-bar button {
-        font-size: 14px;
-        padding: 8px 16px;
-    }
-
-    .modal-content {
-        width: 90%;
-        padding: 15px;
-    }
-
-    #start-chat {
-        padding: 8px 16px;
-        font-size: 14px;
     }
 }
