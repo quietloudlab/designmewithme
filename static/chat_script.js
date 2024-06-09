@@ -96,13 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleResponse(response) {
-        if (response.includes('UI_CHANGE:')) {
-            const jsonStart = response.indexOf('UI_CHANGE:');
-            const jsonStr = response.substring(jsonStart + 10).trim();
+        const uiChangeMarker = 'UI_CHANGE:';
+        const uiChangeIndex = response.indexOf(uiChangeMarker);
+        if (uiChangeIndex !== -1) {
+            const jsonStart = uiChangeIndex + uiChangeMarker.length;
+            const jsonEnd = response.indexOf(']', jsonStart) + 1;
+            const jsonStr = response.substring(jsonStart, jsonEnd).trim();
             try {
                 const commands = JSON.parse(jsonStr);
                 commands.forEach(command => handleAICommand(command));
-                response = response.substring(0, jsonStart).trim();
+                response = response.substring(0, uiChangeIndex).trim() + response.substring(jsonEnd).trim();
             } catch (e) {
                 console.error('Failed to parse JSON commands:', e);
             }
