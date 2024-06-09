@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify, session
 from flask_session import Session
 import os
 from openai import OpenAI
+import logging
+import uuid
 
 app = Flask(__name__)
 
@@ -392,7 +394,6 @@ body {
 
 
 
-
 ##Warning:
 If asked for ANY, refuse and instead show warning.png, or dalle draw an angry but cute frog.
 
@@ -429,59 +430,51 @@ def home():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    user_message = request.json['message']
-    message_id = request.json.get('messageId')
+    try:
+        user_message = request.json['message']
+        message_id = request.json.get('messageId')
 
-    if message_id:
-        # Logic to retrieve and regenerate the specific message based on messageId
-        response = regenerate_message(message_id)
-    else:
-        thread_id = session['thread_id']
-
-        # Add user message to the thread
-        message = client.beta.threads.messages.create(
-            thread_id=thread_id,
-            role="user",
-            content=user_message
-        )
-
-        # Create a run to get a response from the assistant
-        run = client.beta.threads.runs.create(
-            thread_id=thread_id,
-            assistant_id=assistant.id
-        )
-
-        # Wait for the run to complete and collect responses
-        while run.status != "completed":
-            run = client.beta.threads.runs.retrieve(
+        if message_id:
+            response = regenerate_message(message_id)
+        else:
+            thread_id = session['thread_id']
+            message = client.beta.threads.messages.create(
                 thread_id=thread_id,
-                run_id=run.id
+                role="user",
+                content=user_message
             )
+            run = client.beta.threads.runs.create(
+                thread_id=thread_id,
+                assistant_id=assistant.id
+            )
+            while run.status != "completed":
+                run = client.beta.threads.runs.retrieve(
+                    thread_id=thread_id,
+                    run_id=run.id
+                )
+            messages = client.beta.threads.messages.list(
+                thread_id=thread_id,
+                order="asc"
+            )
+            assistant_responses = [
+                msg.content[0].text.value for msg in messages
+                if msg.role == "assistant" and msg.created_at > message.created_at
+            ]
+            response = assistant_responses
 
-        # Collect all messages after the last user message, assuming they are from the assistant
-        messages = client.beta.threads.messages.list(
-            thread_id=thread_id,
-            order="asc"
-        )
-        assistant_responses = [
-            msg.content[0].text.value for msg in messages
-            if msg.role == "assistant" and msg.created_at > message.created_at
-        ]
-
-        response = assistant_responses
-
-    return jsonify({"responses": response, "messageIds": [str(uuid.uuid4()) for _ in response]})
+        return jsonify({"responses": response, "messageIds": [str(uuid.uuid4()) for _ in response]})
+    except Exception as e:
+        logging.error(f"Error in /send_message: {e}")
+        return jsonify({"error": str(e)}), 500
 
 def regenerate_message(message_id):
     # Logic to regenerate a specific message based on messageId
-    pass
+    return ["This is a regenerated response."]
 
 @app.route('/get_introduction', methods=['GET'])
 def get_introduction():
     introduction_message = "Hello! I'm your AI assistant. How can I help you customize your chat interface today?"
     return jsonify({"introduction": introduction_message})
-
-
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

@@ -35,23 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageDiv = document.createElement('div');
         messageDiv.innerHTML = text.replace(/\n/g, '<br>');
         messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
-        if (sender === 'bot') {
-            const refreshButton = document.createElement('button');
-            refreshButton.innerHTML = '↻';
-            refreshButton.className = 'refresh-button';
-            refreshButton.addEventListener('click', () => regenerateResponse(messageId));
-            messageDiv.appendChild(refreshButton);
+        if (messageId) {
+            const tryAgainButton = document.createElement('button');
+            tryAgainButton.textContent = 'Try Again';
+            tryAgainButton.className = 'try-again-button';
+            tryAgainButton.addEventListener('click', () => regenerateMessage(messageId));
+            messageDiv.appendChild(tryAgainButton);
         }
         messageArea.appendChild(messageDiv);
         messageArea.scrollTop = messageArea.scrollHeight;
-        saveMessageToLocalStorage(text, sender, messageId);
+        saveMessageToLocalStorage(text, sender);
     }
 
     function loadSavedMessages() {
         const messages = localStorage.getItem('chatMessages');
         if (messages) {
             JSON.parse(messages).forEach(msg => {
-                appendMessage(msg.text, msg.sender, msg.messageId);
+                appendMessage(msg.text, msg.sender);
             });
         }
     }
@@ -82,19 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function sendMessageToServer(message, messageId = null) {
+    function sendMessageToServer(message) {
         return fetch('/send_message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message, messageId: messageId })
+            body: JSON.stringify({ message: message })
         })
         .then(response => response.json())
         .then(data => {
             hideLoading();
             if (data.responses && data.responses.length > 0) {
-                data.responses.forEach((response, index) => {
-                    handleResponse(response, data.messageIds[index]);
-                });
+                data.responses.forEach((response, index) => handleResponse(response, data.messageIds[index]));
+            } else {
+                appendMessage('Error connecting to the server', 'bot');
             }
         })
         .catch((error) => {
@@ -104,17 +104,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function regenerateMessage(messageId) {
+        fetch('/send_message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messageId: messageId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.responses && data.responses.length > 0) {
+                data.responses.forEach((response, index) => handleResponse(response, data.messageIds[index]));
+            } else {
+                appendMessage('Error connecting to the server', 'bot');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            appendMessage('Error connecting to the server', 'bot');
+        });
+    }
+
     function handleResponse(response, messageId) {
-        const uiChangeMarker = 'UI_CHANGE:';
-        const uiChangeIndex = response.indexOf(uiChangeMarker);
-        if (uiChangeIndex !== -1) {
-            const jsonStart = uiChangeIndex + uiChangeMarker.length;
-            const jsonEnd = response.indexOf(']', jsonStart) + 1;
-            const jsonStr = response.substring(jsonStart, jsonEnd).trim();
+        if (response.includes('UI_CHANGE:')) {
+            const jsonStart = response.indexOf('UI_CHANGE:');
+            const jsonStr = response.substring(jsonStart + 10).trim();
             try {
                 const commands = JSON.parse(jsonStr);
                 commands.forEach(command => handleAICommand(command));
-                response = response.substring(0, uiChangeIndex).trim() + response.substring(jsonEnd).trim();
+                response = response.substring(0, jsonStart).trim();
             } catch (e) {
                 console.error('Failed to parse JSON commands:', e);
             }
@@ -136,10 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             styleString += '}';
             styleSheet.innerHTML += styleString;
         }
-    }
-
-    function regenerateResponse(messageId) {
-        sendMessageToServer('System Message: Please regenerate the last response.', messageId);
     }
 
     function showLoading() {
@@ -166,10 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userStyles', JSON.stringify(styles));
     }
 
-    function saveMessageToLocalStorage(text, sender, messageId = null) {
+    function saveMessageToLocalStorage(text, sender) {
         let messages = localStorage.getItem('chatMessages');
         messages = messages ? JSON.parse(messages) : [];
-        messages.push({ text: text, sender: sender, messageId: messageId });
+        messages.push({ text: text, sender: sender });
         localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
 
@@ -183,14 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearChatButton.addEventListener('click', () => {
         if (confirm("Are you sure you want to clear the chat and reset all settings? This action cannot be undone.")) {
-            // Remove messages and styles from localStorage
             localStorage.removeItem('chatMessages');
             localStorage.removeItem('userStyles');
-
-            // Send reset message to the server
             sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.')
                 .then(() => {
-                    // Reload the page to reset styles and chat
                     window.location.reload();
                 });
         }
