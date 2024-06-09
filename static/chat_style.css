@@ -212,6 +212,21 @@ body {
     background-color: #45a049;
 }
 
+/* Refresh button styles */
+.refresh-button {
+    background: none;
+    border: none;
+    color: #007BFF;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.refresh-button:hover {
+    color: #0056b3;
+}
+
+
 /* Media Queries for Responsive Design */
 @media (max-width: 600px) {
     #menu-bar {

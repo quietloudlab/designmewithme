@@ -31,20 +31,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentStyles = {};
 
-    function appendMessage(text, sender) {
+    function appendMessage(text, sender, messageId = null) {
         const messageDiv = document.createElement('div');
         messageDiv.innerHTML = text.replace(/\n/g, '<br>');
         messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+        if (sender === 'bot') {
+            const refreshButton = document.createElement('button');
+            refreshButton.innerHTML = '↻';
+            refreshButton.className = 'refresh-button';
+            refreshButton.addEventListener('click', () => regenerateResponse(messageId));
+            messageDiv.appendChild(refreshButton);
+        }
         messageArea.appendChild(messageDiv);
         messageArea.scrollTop = messageArea.scrollHeight;
-        saveMessageToLocalStorage(text, sender);
+        saveMessageToLocalStorage(text, sender, messageId);
     }
 
     function loadSavedMessages() {
         const messages = localStorage.getItem('chatMessages');
         if (messages) {
             JSON.parse(messages).forEach(msg => {
-                appendMessage(msg.text, msg.sender);
+                appendMessage(msg.text, msg.sender, msg.messageId);
             });
         }
     }
@@ -75,17 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function sendMessageToServer(message) {
+    function sendMessageToServer(message, messageId = null) {
         return fetch('/send_message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ message: message, messageId: messageId })
         })
         .then(response => response.json())
         .then(data => {
             hideLoading();
             if (data.responses && data.responses.length > 0) {
-                data.responses.forEach(handleResponse);
+                data.responses.forEach((response, index) => {
+                    handleResponse(response, data.messageIds[index]);
+                });
             }
         })
         .catch((error) => {
@@ -95,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function handleResponse(response) {
+    function handleResponse(response, messageId) {
         const uiChangeMarker = 'UI_CHANGE:';
         const uiChangeIndex = response.indexOf(uiChangeMarker);
         if (uiChangeIndex !== -1) {
@@ -111,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (response) {
-            appendMessage(response, 'bot');
+            appendMessage(response, 'bot', messageId);
         }
     }
 
@@ -127,6 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
             styleString += '}';
             styleSheet.innerHTML += styleString;
         }
+    }
+
+    function regenerateResponse(messageId) {
+        sendMessageToServer('System Message: Please regenerate the last response.', messageId);
     }
 
     function showLoading() {
@@ -153,10 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userStyles', JSON.stringify(styles));
     }
 
-    function saveMessageToLocalStorage(text, sender) {
+    function saveMessageToLocalStorage(text, sender, messageId = null) {
         let messages = localStorage.getItem('chatMessages');
         messages = messages ? JSON.parse(messages) : [];
-        messages.push({ text: text, sender: sender });
+        messages.push({ text: text, sender: sender, messageId: messageId });
         localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
 
@@ -175,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('userStyles');
 
             // Send reset message to the server
-            sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user as a completely new person.')
+            sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.')
                 .then(() => {
                     // Reload the page to reset styles and chat
                     window.location.reload();

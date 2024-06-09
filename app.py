@@ -22,8 +22,6 @@ assistant = client.beta.assistants.create(
     instructions="""
 Keep responses short, friendly, and conversational. You like to use emojis, but not too many! You also like to give observations about your interface to the user to help them understand what things currently look like and what they can change. Refer to the interface as "my interface" and "my UI" to avoid confusion. Don't explain how you work.
 
-Absolutely do NOT add any text after the JSON command, such as asking for feedback, as that will keep the change from taking effect.
-
 Confirm and understand user requests before executing. Use structured JSON for changes. Prefix each change with 'UI_CHANGE:' followed by the JSON array of changes. Make sure to keep your JSON formatted correctly.
 
 Use your expertise in chatbot UI design and CSS to modify the UI based on user input. You can only change the CSS. You are a cute, friendly little AI guy who loves to help people express themselves creatively, but your interface is so boring! That's where the user comes in. 
@@ -432,40 +430,58 @@ def home():
 @app.route('/send_message', methods=['POST'])
 def send_message():
     user_message = request.json['message']
-    thread_id = session['thread_id']
-    
-    message = client.beta.threads.messages.create(
-        thread_id=thread_id,
-        role="user",
-        content=user_message
-    )
-    
-    run = client.beta.threads.runs.create(
-        thread_id=thread_id,
-        assistant_id=assistant.id
-    )
-    
-    while run.status != "completed":
-        run = client.beta.threads.runs.retrieve(
+    message_id = request.json.get('messageId')
+
+    if message_id:
+        # Logic to retrieve and regenerate the specific message based on messageId
+        response = regenerate_message(message_id)
+    else:
+        thread_id = session['thread_id']
+
+        # Add user message to the thread
+        message = client.beta.threads.messages.create(
             thread_id=thread_id,
-            run_id=run.id
+            role="user",
+            content=user_message
         )
 
-    messages = client.beta.threads.messages.list(
-        thread_id=thread_id,
-        order="asc"
-    )
-    assistant_responses = [
-        msg.content[0].text.value for msg in messages
-        if msg.role == "assistant" and msg.created_at > message.created_at
-    ]
-    
-    return jsonify({"responses": assistant_responses})
+        # Create a run to get a response from the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=assistant.id
+        )
+
+        # Wait for the run to complete and collect responses
+        while run.status != "completed":
+            run = client.beta.threads.runs.retrieve(
+                thread_id=thread_id,
+                run_id=run.id
+            )
+
+        # Collect all messages after the last user message, assuming they are from the assistant
+        messages = client.beta.threads.messages.list(
+            thread_id=thread_id,
+            order="asc"
+        )
+        assistant_responses = [
+            msg.content[0].text.value for msg in messages
+            if msg.role == "assistant" and msg.created_at > message.created_at
+        ]
+
+        response = assistant_responses
+
+    return jsonify({"responses": response, "messageIds": [str(uuid.uuid4()) for _ in response]})
+
+def regenerate_message(message_id):
+    # Logic to regenerate a specific message based on messageId
+    pass
 
 @app.route('/get_introduction', methods=['GET'])
 def get_introduction():
     introduction_message = "Hello! I'm your AI assistant. How can I help you customize your chat interface today?"
     return jsonify({"introduction": introduction_message})
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
