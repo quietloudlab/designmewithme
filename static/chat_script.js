@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('userStyles');
 
             // Send reset message to the server
-            sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user.')
+            sendMessageToServer('System Message: The user has reset the style and UI, and you are starting from a blank slate. Please greet the user as a completely new person.')
                 .then(() => {
                     // Reload the page to reset styles and chat
                     window.location.reload();
